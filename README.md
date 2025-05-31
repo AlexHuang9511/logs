@@ -8,7 +8,7 @@ Logs are stored in a separate logs/ folder, created on init.
 Logs are named based on run time where l_init() was called.
 
 
-To start, put init at the top of main.
+To start, copy log.h into your project and put init at the top of main.
 ```c
 l_init();
 ```
