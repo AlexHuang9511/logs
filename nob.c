@@ -12,6 +12,8 @@ int main(int argc, char **argv) {
 
 	if (!nob_cmd_run_sync_and_reset(&cmd)) return 1;
 
+	
+
 	return 0;
 }
 

@@ -12,8 +12,8 @@ int l_close();
 * Call before end of program.
 */
 
-#define l_log(flag, msg) \
-    _l_flog(__FILE__, __LINE__, flag, msg)
+#define l_log(dest, flag, msg) \
+    _l_log(__FILE__, __LINE__, dest, flag, msg)
 /*
 * Writes into the logfile at a given time the program is ran.
 * Flags gives nicer formatting of messages.
@@ -22,24 +22,27 @@ int l_close();
 *   - ERR
 */
 
-#define l_flog(flag, msg, ...) \
-    _l_flog(__FILE__, __LINE__, flag, msg, __VA_ARGS__)
+#define l_flog(dest, flag, msg, ...) \
+    _l_flog(__FILE__, __LINE__, dest, flag, msg, __VA_ARGS__)
 /*
 * Formatted logging.
 * Otherwise same as l_log.
 */
 
-void _l_flog(char *file, int line, int flag, const char *msg, ...);
-void _l_log(char *file, int line, int flag, char *msg);
+void _l_flog(char *file, int line, int dest, int flag, const char *msg, ...);
+void _l_log(char *file, int line, int dest, int flag, char *msg);
 
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <stdarg.h>
 
 #define INFO 0
 #define ERR 1
+
+#define FILE_FILENO 3
 
 
 FILE *lgfd;
@@ -72,30 +75,54 @@ int l_init() {
     return 0;
 }
 
-void _l_log(char *file, int line, int flag, char *msg) {
-    if (flag == INFO) {
-        fprintf(lgfd, "%s:%i [INFO] --> %s", file, line, msg);
-    } else if (flag == ERR) {
-        fprintf(lgfd, "%s:%i [ERROR] --> %s", file, line, msg);
+void _l_log(char *file, int line, int dest, int flag, char *msg) {
+
+    FILE *localfd;
+
+    if (dest == STDOUT_FILENO) {
+        localfd = stdout;
+    } else if (dest == STDERR_FILENO) {
+        localfd = stderr;
+    } else if (dest == FILE_FILENO) {
+        localfd = lgfd;
     }
-    fflush(lgfd);
+
+    if (flag == INFO) {
+        fprintf(localfd, "%s:%i [INFO] --> %s", file, line, msg);
+        fprintf(localfd, "\n");
+    } else if (flag == ERR) {
+        fprintf(localfd, "%s:%i [ERROR] --> %s", file, line, msg);
+        fprintf(localfd, "\n");
+    }
+    fflush(localfd);
     return;
 }
 
-void _l_flog(char *file, int line, int flag, const char *msg, ...) {
+void _l_flog(char *file, int line, int dest, int flag, const char *msg, ...) {
+
+    FILE *localfd;
+
+    if (dest == STDOUT_FILENO) {
+        localfd = stdout;
+    } else if (dest == STDERR_FILENO) {
+        localfd = stderr;
+    } else if (dest == FILE_FILENO) {
+        localfd = lgfd;
+    }
+
     va_list args;
     va_start(args, msg);
     if (flag == INFO) {
-        fprintf(lgfd, "%s:%i [INFO] --> ", file, line);
-        vfprintf(lgfd, msg, args);
-        fprintf(lgfd, "\n");
+        fprintf(localfd, "%s:%i [INFO] --> ", file, line);
+        vfprintf(localfd, msg, args);
+        fprintf(localfd, "\n");
     } else if (flag == ERR) {
-        fprintf(lgfd, "%s:%i [ERROR] --> ", file, line);
-        vfprintf(lgfd, msg, args);
-        fprintf(lgfd, "\n");
+        fprintf(localfd, "%s:%i [ERROR] --> ", file, line);
+        vfprintf(localfd, msg, args);
+        fprintf(localfd, "\n");
     }
     va_end(args);
-    fflush(lgfd);
+    fflush(localfd);
     return;
 }
 
