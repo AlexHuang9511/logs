@@ -16,6 +16,11 @@ int l_close();
     _l_log(__FILE__, __LINE__, dest, flag, msg)
 /*
 * Writes into the logfile at a given time the program is ran.
+* Dest determines whether to write to stdout or a file
+* Dest includes:
+*   - STDOUT_FILENO -> write to stdout
+*   - STDERR_FILENO - write to stderr
+*   - FILE_FILENO - write to file
 * Flags gives nicer formatting of messages.
 * Flags include:
 *   - INFO
