@@ -18,19 +18,23 @@ And remember to close it too.
 l_close();
 ```
 
-Use l_log to log a string.
+Use l_log to log a string to a log file.
 ```c
-l_log(INFO, "Hello");
+l_log(FILE_FILENO, INFO, "Hello");
 ```
 
-Use l_flog to log a formatted string.
+Use l_flog to log a formatted string to stdout.
 ```c
-l_flog(ERR, "What's %i + %i?", 9, 10);
+l_flog(STDOUT_FILENO, ERR, "What's %i + %i?", 9, 10);
 ```
+
+Supported output channels are:
+- stdout - ```STDOUT_FILENO```
+- stderr - ```STDERR_FILENO```
+- file - ```FILE_FILENO```
 
 Currently supported log types and their flags:
 - Info -```INFO```
 - Error - ```ERR```
-
 
 See main.c for examples. 
