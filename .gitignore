@@ -3,3 +3,6 @@ nob
 main
 main.c
 nob.exe
+.gitignore
+nob.c
+nob.h
