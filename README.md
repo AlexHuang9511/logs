@@ -5,7 +5,7 @@ A logging util that is just a .h file.
 Logs are stored in a separate logs/ folder, created on init.
 
 
-Logs are named based on run time where l_init() was called.
+Logs are named based on the system time when l_init() is called.
 
 
 To start, copy log.h into your project and put ```LOG_INIT``` at the top along with the #includes.
@@ -20,7 +20,7 @@ And remember to close it too at the end.
 l_close();
 ```
 
-l_log logs to stdout/stderr AND a file in ```./logs/```
+l_log logs to stdout/stderr AND a file in ```logs/```
 ```c
 l_log(L_INFO, "Hello");
 ```
