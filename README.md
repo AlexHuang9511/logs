@@ -8,30 +8,47 @@ Logs are stored in a separate logs/ folder, created on init.
 Logs are named based on run time where l_init() was called.
 
 
-To start, copy log.h into your project and put init at the top of main.
+To start, copy log.h into your project and put ```LOG_INIT``` at the top along with the #includes.
+
+Then, put init at the top of main.
 ```c
 l_init();
 ```
 
-And remember to close it too.
+And remember to close it too at the end.
 ```c
 l_close();
 ```
 
-Use l_log to log a string to a log file.
+l_log logs to stdout/stderr AND a file in ```./logs/```
 ```c
-l_log(FILE_FILENO, INFO, "Hello");
+l_log(L_INFO, "Hello");
 ```
 
-Use l_flog to log a formatted string to stdout.
+Depending on the flag (L_INFO, L_ERR), l_log will also print to stdout or stderr
+
+l_flog logs a formatted string
 ```c
-l_flog(STDOUT_FILENO, ERR, "What's %i + %i?", 9, 10);
+l_flog(L_ERR, "What's %i + %i?", 9, 10);
 ```
 
-Supported output channels are:
-- stdout - ```STDOUT_FILENO```
-- stderr - ```STDERR_FILENO```
-- file - ```FILE_FILENO```
+For logging to file only:
+```c
+l_flog(flag, msg);
+l_flogf(flag, msg, ...);
+```
+
+For logging to stdout only:
+```c
+l_olog(flag, msg);
+l_ologf(flag, msg, ...);
+```
+
+For logging to stderr only:
+```c
+l_elog(flag, msg);
+l_elogf(flag, msg, ...);
+```
 
 Currently supported log types and their flags:
 - Info -```INFO```
